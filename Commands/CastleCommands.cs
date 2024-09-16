@@ -116,7 +116,7 @@ internal class CastleCommands
 		return (castleHeartComponent.FuelEndTime - Core.ServerTime) + secondsPerFuel * castleHeartComponent.FuelQuantity;
 	}
 
-	[Command("openplots", "op", description: "Reports all the territories with open and/or decaying plots.")]
+	[Command("openplots", "op", description: "Reports all the territories with open and/or decaying plots.", adminOnly: false)]
 	public static void OpenPlots(ChatCommandContext ctx)
 	{
 		Dictionary<WorldRegionType, int> openPlots = [];

@@ -355,7 +355,7 @@ class ClanCommands
 	}//*/
 
 
-	[Command("list", "l", description: "List clans on the server")]
+	[Command("list", "l", description: "List clans on the server", adminOnly: true)]
     public static void ListClans(ChatCommandContext ctx, int page = 1)
     {
         var clanList = new List<string>();
@@ -391,7 +391,7 @@ class ClanCommands
     }
 
 
-    [Command("members", "m", description: "List members")]
+    [Command("members", "m", description: "List members", adminOnly: true)]
     public static void ListClanMembers(ChatCommandContext ctx, string clanName)
     {
         if (!FindClan(clanName, out var clanEntity))
