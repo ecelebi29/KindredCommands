@@ -239,4 +239,50 @@ internal class CastleCommands
             ctx.Reply(sb.ToString());
         }
     }
+
+	[Command("clanplotsowned", "cpo", description: "Reports the number of plots owned by each clan", adminOnly: true)]
+	public static void ClanPlotsOwned(ChatCommandContext ctx, int? page = null)
+	{
+		var castleTerritories = Helper.GetEntitiesByComponentType<CastleTerritory>();
+		var clanPlots = new Dictionary<Entity, int>();
+		foreach (var castleTerritoryEntity in castleTerritories)
+		{
+			var castleTerritory = castleTerritoryEntity.Read<CastleTerritory>();
+			if (castleTerritory.CastleHeart.Equals(Entity.Null)) continue;
+
+			var userOwner = castleTerritory.CastleHeart.Read<UserOwner>();
+			var user = userOwner.Owner.GetEntityOnServer().Read<User>();
+			if (user.ClanEntity.Equals(NetworkedEntity.Empty)) continue;
+
+			if (clanPlots.ContainsKey(user.ClanEntity.GetEntityOnServer()))
+			{
+				clanPlots[user.ClanEntity.GetEntityOnServer()]++;
+			}
+			else
+			{
+				clanPlots[user.ClanEntity.GetEntityOnServer()] = 1;
+			}
+		}
+
+		var sb = new StringBuilder();
+		sb.AppendLine("Clans by Plots Owned");
+		int count = 0;
+		int startIndex = (page ?? 1) == 1 ? 0 : ((page ?? 1) - 1) * 8;
+		foreach (var clanPlot in clanPlots.OrderByDescending(x => x.Value).Skip(startIndex).Take(8))
+		{
+			var clan = clanPlot.Key.Read<ClanTeam>();
+			sb.AppendLine($"{clan.Name} owns {clanPlot.Value} plots");
+			count++;
+			if (count % 8 == 0)
+			{
+				ctx.Reply(sb.ToString());
+				sb.Clear();
+			}
+		}
+
+		if (sb.Length > 0)
+		{
+			ctx.Reply(sb.ToString());
+		}
+	}
 }
