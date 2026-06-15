@@ -123,7 +123,7 @@ internal static class DurabilityCommands
 			}
 		}
 
-		[Command("soulshardstatus", "sss", description: "Reports the current status of soulshards.", adminOnly: false)]
+		[Command("soulshardstatus", "sss", description: "Reports the current status of soulshards.", adminOnly: true)]
 		public static void SoulshardStatusCommand(ChatCommandContext ctx)
 		{
 			var sb = new StringBuilder();
