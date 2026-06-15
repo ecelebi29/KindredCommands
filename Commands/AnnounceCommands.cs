@@ -6,7 +6,7 @@ namespace KindredCommands.Commands;
 
 public class AnnounceCommands
 {
-	[Command("time", description: "Reports the server time.")]
+	[Command("time", description: "Reports the server time.", adminOnly: true)]
     public static void GetTimeCommand(ChatCommandContext ctx)
     {
         var serverTime = DateTime.Now;
