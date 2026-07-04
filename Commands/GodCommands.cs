@@ -30,6 +30,7 @@ internal class GodCommands
 		Core.BoostedPlayerService.ToggleNoBlooddrain(charEntity);
 		Core.BoostedPlayerService.ToggleNoCooldown(charEntity);
 		Core.BoostedPlayerService.ToggleNoDurability(charEntity);
+		Core.BoostedPlayerService.ToggleNoMapCollision(charEntity);
 		Core.BoostedPlayerService.TogglePlayerImmaterial(charEntity);
 		Core.BoostedPlayerService.TogglePlayerInvincible(charEntity);
 		Core.BoostedPlayerService.TogglePlayerShrouded(charEntity);
@@ -110,6 +111,7 @@ internal class GodCommands
 				var noBlooddrain = Core.BoostedPlayerService.HasNoBlooddrain(charEntity);
 				var noCooldown = Core.BoostedPlayerService.HasNoCooldown(charEntity);
 				var noDurability = Core.BoostedPlayerService.HasNoDurability(charEntity);
+				var noMapCollision = Core.BoostedPlayerService.HasNoMapCollision(charEntity);
 				var immaterial = Core.BoostedPlayerService.IsPlayerImmaterial(charEntity);
 				var invincible = Core.BoostedPlayerService.IsPlayerInvincible(charEntity);
 				var shrouded = Core.BoostedPlayerService.IsPlayerShrouded(charEntity);
@@ -137,6 +139,8 @@ internal class GodCommands
 					flags.Add("<color=white>No Cooldown</color>");
 				if(noDurability)
 					flags.Add("<color=white>No Durability Loss</color>");
+				if (noMapCollision)
+					flags.Add("<color=white>No Map Collision</color>");
 				if(immaterial)
 					flags.Add("<color=white>Immaterial</color>");
 				if(invincible)
@@ -385,6 +389,23 @@ internal class GodCommands
 			else
 			{
 				ctx.Reply($"No durability loss removed from <color=white>{name}</color>");
+			}
+			Core.BoostedPlayerService.UpdateBoostedPlayer(charEntity);
+		}
+
+		[Command("nomapcollision", "npc", adminOnly: true)]
+		public static void NoMapCollision(ChatCommandContext ctx, OnlinePlayer player = null)
+		{
+			var name = player?.Value.UserEntity.Read<User>().CharacterName ?? ctx.Event.User.CharacterName;
+			var charEntity = player?.Value.CharEntity ?? ctx.Event.SenderCharacterEntity;
+
+			if (Core.BoostedPlayerService.ToggleNoMapCollision(charEntity))
+			{
+				ctx.Reply($"No map collision added to <color=white>{name}</color>");
+			}
+			else
+			{
+				ctx.Reply($"No map collision removed from <color=white>{name}</color>");
 			}
 			Core.BoostedPlayerService.UpdateBoostedPlayer(charEntity);
 		}

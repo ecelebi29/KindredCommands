@@ -210,9 +210,9 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - will set the player into spectate mode, where they are invisible and cannot interact with anything. Use again to remove it and teleport them to their prior position (default true), or pass false to stay where they are.
   - Example: *.spectate Bob*
 - `.boost (Type) (Player)`
-  - will boost a player with certain types: noaggro, noblooddrain, nocooldown, nodurability, immaterial, invincible, shrouded, fly, suninvulnerable, batvision. Remove via use of same command again as a toggle or use .mortal to strip all.
+  - will boost a player with certain types: noaggro, noblooddrain, nocooldown, nodurability, nomapcollision, immaterial, invincible, shrouded, fly, suninvulnerable, batvision. Remove via use of same command again as a toggle or use .mortal to strip all.
   - Example: *.boost immaterial Bob*
-  - Shortcuts: *.boost (na, nb, nc, nd, i, inv, sh, f, suninv, bv)*
+  - Shortcuts: *.boost (na, nb, nc, nd, npc, i, inv, sh, f, suninv, bv)*
 - `.boost (Type) (Amount) (Player)`
   - will boost a player's stats to the amount specified. Types with amounts are the following: attackspeed, damage, health, speed, and yield.
   - Example: *.boost damage 100 Bob*
