@@ -15,6 +15,22 @@ using VampireCommandFramework;
 namespace KindredCommands.Commands;
 internal class InfoCommands
 {
+	[Command("info", description: "Shows the server description.", adminOnly: false)]
+	public static void ServerDescription(ChatCommandContext ctx)
+	{
+		var description = SettingsManager.ServerHostSettings.Description;
+		if (string.IsNullOrWhiteSpace(description))
+		{
+			ctx.Reply("This server has no description set.");
+			return;
+		}
+
+		while (Encoding.UTF8.GetByteCount(description) > Core.MAX_REPLY_LENGTH)
+			description = description[..^1];
+
+		ctx.Reply(description);
+	}
+
 	[Command("whereami", "wai", description: "Gives your current position", adminOnly: true)]
 	public static void WhereAmI(ChatCommandContext ctx)
 	{

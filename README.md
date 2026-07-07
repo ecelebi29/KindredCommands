@@ -468,6 +468,8 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
 ## Player Accessible Commands:
 - `.afk`
   - will put Zzzzz above character and lock wasd movement. It's a toggle.
+- `.info`
+  - will show the server description.
 - `.staff`
   - will list staff who are online.
 - `.ping`
