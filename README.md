@@ -445,6 +445,10 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - will change the level of the primal boss to the level specified. Upon respawn, they will be their original level. You can still modify the level of the boss while its in its 'blood walk', and it will spawn with that level. Must be near boss.
   - Example: *.boss modifyprimal octavian 100*
   - Shortcut: *.boss mp*
+- `.boss respawn (boss)`
+  - will remove the respawn timer of the nearest specified boss, allowing it to spawn immediately.
+  - Example: *.boss respawn solarus*
+  - Shortcut: *.boss r*
 - `.boss teleportto (name) (WhichOne)`
   - will teleport you to the boss specified. If multiple bosses are up, you can specify which one to teleport to. Bosses must have been spawned in at least once on the map to be teleported to.
   - Example: *.boss teleportto TheNameOfTheBoss 1*

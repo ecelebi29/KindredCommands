@@ -84,6 +84,55 @@ internal class BossCommands
 		ctx.Reply($"Changed the nearest {boss.Name} to level {level} from level {previousLevel}");
 	}
 
+	[Command("respawn", "r", description: "Removes the respawn timer of the specified nearest boss, allowing it to spawn immediately.", adminOnly: true)]
+	public static void RespawnBossCommand(ChatCommandContext ctx, FoundVBlood boss)
+	{
+		var entityManager = Core.EntityManager;
+		var playerEntity = ctx.Event.SenderCharacterEntity;
+		var playerPos = playerEntity.Read<LocalToWorld>().Position;
+		var closestVBlood = Entity.Null;
+		var closestDistance = float.MaxValue;
+
+		foreach (var entity in Helper.GetEntitiesByComponentType<VBloodUnit>(includeDisabled: true).ToArray().Where(x => Vector3.Distance(x.Read<Translation>().Value, Vector3.zero) > 1))
+		{
+			if (entity.Read<PrefabGUID>().GuidHash != boss.Value.GuidHash)
+				continue;
+
+			if (Vector3.Distance(entity.Read<Translation>().Value, playerPos) < closestDistance)
+			{
+				closestDistance = Vector3.Distance(entity.Read<Translation>().Value, playerPos);
+				closestVBlood = entity;
+			}
+		}
+
+		if (closestVBlood.Equals(Entity.Null))
+		{
+			ctx.Reply($"Couldn't find '{boss.Name}' to respawn");
+			return;
+		}
+
+		const string vbloodSpawnBuffPrefix = "Buff_General_Spawn_VBlood";
+		var removedAny = false;
+		if (entityManager.HasComponent<BuffBuffer>(closestVBlood))
+		{
+			var buffBuffer = entityManager.GetBuffer<BuffBuffer>(closestVBlood);
+			for (var i = 0; i < buffBuffer.Length; ++i)
+			{
+				var buff = buffBuffer[i];
+				if (!buff.PrefabGuid.LookupName().StartsWith(vbloodSpawnBuffPrefix))
+					continue;
+
+				Buffs.RemoveBuff(closestVBlood, buff.PrefabGuid);
+				removedAny = true;
+			}
+		}
+
+		if (removedAny)
+			ctx.Reply($"Removed the respawn timer from the nearest {boss.Name}");
+		else
+			ctx.Reply($"The nearest {boss.Name} has no respawn timer to remove");
+	}
+
 	[Command("teleportto", "tt", description: "Teleports you to the named boss. (If multiple specify the number of which one)", adminOnly: true)]
     public static void TeleportToBossCommand(ChatCommandContext ctx, FoundVBlood boss, int whichOne=0)
     {
