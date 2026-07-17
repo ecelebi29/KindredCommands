@@ -209,6 +209,9 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
 - `.spectate (Player) (ReturnToStart: true/false)`
   - will set the player into spectate mode, where they are invisible and cannot interact with anything. Use again to remove it and teleport them to their prior position (default true), or pass false to stay where they are.
   - Example: *.spectate Bob*
+- `.ghost (Player)`
+  - will set the player into spectate mode without the action restrictions. Use again to remove it without teleporting them back.
+  - Example: *.ghost Bob*
 - `.boost (Type) (Player)`
   - will boost a player with certain types: noaggro, noblooddrain, nocooldown, nodurability, nomapcollision, immaterial, invincible, shrouded, fly, suninvulnerable, batvision. Remove via use of same command again as a toggle or use .mortal to strip all.
   - Example: *.boost immaterial Bob*

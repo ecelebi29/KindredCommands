@@ -58,6 +58,12 @@ internal class GodCommands
 
 	static Dictionary<string, Vector3> positionBeforeSpectate = [];
 
+	static bool IsGhost(Unity.Entities.Entity buffEntity)
+	{
+		return buffEntity.Has<BuffModificationFlagData>() &&
+			(buffEntity.Read<BuffModificationFlagData>().ModificationTypes & (long)BuffModificationTypes.AbilityCastImpair) == 0;
+	}
+
 	[Command("spectate", adminOnly: true, description:"Toggles spectate on the target player")]
 	public static void SpectateCommand(ChatCommandContext ctx, OnlinePlayer player = null, bool returnToStart=true)
 	{
@@ -65,8 +71,13 @@ internal class GodCommands
 		var userEntity = player?.Value.UserEntity ?? ctx.Event.SenderUserEntity;
 		var name = userEntity.Read<User>().CharacterName;
 
-		if (BuffUtility.HasBuff(Core.EntityManager, charEntity, Prefabs.Admin_Observe_Invisible_Buff))
+		if (BuffUtility.TryGetBuff(Core.EntityManager, charEntity, Prefabs.Admin_Observe_Invisible_Buff, out var spectateBuff))
 		{
+			if (IsGhost(spectateBuff))
+			{
+				ctx.Reply($"<color=white>{name}</color> is in <color=yellow>Ghost</color> mode. Use .ghost to remove it.");
+				return;
+			}
 			if (returnToStart)
 			{
 				if (!positionBeforeSpectate.TryGetValue(name.ToString(), out var returnPos))
@@ -84,6 +95,37 @@ internal class GodCommands
 			Buffs.AddBuff(userEntity, charEntity, Prefabs.Admin_Observe_Invisible_Buff, -1);
 			positionBeforeSpectate.Add(name.ToString(), charEntity.Read<Translation>().Value);
 			ctx.Reply($"<color=yellow>Spectate</color> added to <color=white>{name}</color>");
+		}
+	}
+
+	[Command("ghost", adminOnly: true, description:"Toggles ghost on the target player")]
+	public static void GhostCommand(ChatCommandContext ctx, OnlinePlayer player = null)
+	{
+		var charEntity = player?.Value.CharEntity ?? ctx.Event.SenderCharacterEntity;
+		var userEntity = player?.Value.UserEntity ?? ctx.Event.SenderUserEntity;
+		var name = userEntity.Read<User>().CharacterName;
+
+		if (BuffUtility.TryGetBuff(Core.EntityManager, charEntity, Prefabs.Admin_Observe_Invisible_Buff, out var ghostBuff))
+		{
+			if (!IsGhost(ghostBuff))
+			{
+				ctx.Reply($"<color=white>{name}</color> is in <color=yellow>Spectate</color> mode. Use .spectate to remove it.");
+				return;
+			}
+			Buffs.RemoveBuff(charEntity, Prefabs.Admin_Observe_Invisible_Buff);
+			ctx.Reply($"<color=yellow>Ghost</color> removed from <color=white>{name}</color>");
+		}
+		else
+		{
+			Buffs.AddBuff(userEntity, charEntity, Prefabs.Admin_Observe_Invisible_Buff, -1);
+			if (BuffUtility.TryGetBuff(Core.EntityManager, charEntity, Prefabs.Admin_Observe_Invisible_Buff, out var buffEntity)
+				&& buffEntity.Has<BuffModificationFlagData>())
+			{
+				var flags = buffEntity.Read<BuffModificationFlagData>();
+				flags.ModificationTypes &= ~(long)BuffModificationTypes.AbilityCastImpair;
+				buffEntity.Write(flags);
+			}
+			ctx.Reply($"<color=yellow>Ghost</color> added to <color=white>{name}</color>");
 		}
 	}
 
