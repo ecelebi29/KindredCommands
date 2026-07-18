@@ -28,6 +28,7 @@ internal class GodCommands
 		Core.BoostedPlayerService.ToggleBatVision(charEntity);
 		Core.BoostedPlayerService.ToggleNoAggro(charEntity);
 		Core.BoostedPlayerService.ToggleNoBlooddrain(charEntity);
+		Core.BoostedPlayerService.ToggleNoCC(charEntity);
 		Core.BoostedPlayerService.ToggleNoCooldown(charEntity);
 		Core.BoostedPlayerService.ToggleNoDurability(charEntity);
 		Core.BoostedPlayerService.ToggleNoMapCollision(charEntity);
@@ -151,6 +152,7 @@ internal class GodCommands
 				var batVision = Core.BoostedPlayerService.HasBatVision(charEntity);
 				var noAggro = Core.BoostedPlayerService.HasNoAggro(charEntity);
 				var noBlooddrain = Core.BoostedPlayerService.HasNoBlooddrain(charEntity);
+				var noCC = Core.BoostedPlayerService.HasNoCC(charEntity);
 				var noCooldown = Core.BoostedPlayerService.HasNoCooldown(charEntity);
 				var noDurability = Core.BoostedPlayerService.HasNoDurability(charEntity);
 				var noMapCollision = Core.BoostedPlayerService.HasNoMapCollision(charEntity);
@@ -177,6 +179,8 @@ internal class GodCommands
 					flags.Add("<color=white>No Aggro</color>");
 				if(noBlooddrain)
 					flags.Add("<color=white>No Blooddrain</color>");
+				if(noCC)
+					flags.Add("<color=white>No CC</color>");
 				if(noCooldown)
 					flags.Add("<color=white>No Cooldown</color>");
 				if(noDurability)
@@ -397,6 +401,23 @@ internal class GodCommands
 			else
 			{
 				ctx.Reply($"No blooddrain removed from <color=white>{name}</color>");
+			}
+			Core.BoostedPlayerService.UpdateBoostedPlayer(charEntity);
+		}
+
+		[Command("nocc", "ncc", adminOnly: true)]
+		public static void NoCC(ChatCommandContext ctx, OnlinePlayer player = null)
+		{
+			var name = player?.Value.UserEntity.Read<User>().CharacterName ?? ctx.Event.User.CharacterName;
+			var charEntity = player?.Value.CharEntity ?? ctx.Event.SenderCharacterEntity;
+
+			if (Core.BoostedPlayerService.ToggleNoCC(charEntity))
+			{
+				ctx.Reply($"No CC added to <color=white>{name}</color>");
+			}
+			else
+			{
+				ctx.Reply($"No CC removed from <color=white>{name}</color>");
 			}
 			Core.BoostedPlayerService.UpdateBoostedPlayer(charEntity);
 		}

@@ -21,6 +21,7 @@ namespace KindredCommands.Services
 		readonly HashSet<Entity> flyingPlayers = [];
 		readonly HashSet<Entity> noAggroPlayers = [];
 		readonly HashSet<Entity> noBlooddrainPlayers = [];
+		readonly HashSet<Entity> noCCPlayers = [];
 		readonly HashSet<Entity> noDurabilityPlayers = [];
 		readonly HashSet<Entity> noCooldownPlayers = [];
 		readonly HashSet<Entity> noMapCollisionPlayers = [];
@@ -40,8 +41,8 @@ namespace KindredCommands.Services
 			return playerAttackSpeed.ContainsKey(charEntity) || playerDamage.ContainsKey(charEntity) || playerHps.ContainsKey(charEntity) ||
 				playerSpeeds.ContainsKey(charEntity) || playerYield.ContainsKey(charEntity) ||
 				batVisionPlayers.Contains(charEntity) || flyingPlayers.Contains(charEntity) || 
-				noAggroPlayers.Contains(charEntity) || noBlooddrainPlayers.Contains(charEntity) || noDurabilityPlayers.Contains(charEntity) ||
-				noCooldownPlayers.Contains(charEntity) || noMapCollisionPlayers.Contains(charEntity) ||
+				noAggroPlayers.Contains(charEntity) || noBlooddrainPlayers.Contains(charEntity) || noCCPlayers.Contains(charEntity) ||
+				noCooldownPlayers.Contains(charEntity) || noDurabilityPlayers.Contains(charEntity) || noMapCollisionPlayers.Contains(charEntity) ||
 				immaterialPlayers.Contains(charEntity) || invinciblePlayers.Contains(charEntity) ||
 				includeShrouded && shroudedPlayers.Contains(charEntity) || sunInvulnPlayers.Contains(charEntity) ||
 				includeDaywalkers && daywalkerPlayers.Contains(charEntity);
@@ -107,6 +108,15 @@ namespace KindredCommands.Services
 					Buffs.RemoveBuff(charEntity, Prefabs.EquipBuff_ShroudOfTheForest);
 			}
 
+			if (noCCPlayers.Contains(charEntity))
+			{
+				SetResistanceSettings(charEntity, Prefabs.BuffResistance_UberMobNoKnockbackOrGrab);
+			}
+			else
+			{
+				RestoreResistanceSettings(charEntity);
+			}
+
 			Core.StartCoroutine(RemoveAndAddCustomBuff(userEntity, charEntity));
 		}
 
@@ -145,6 +155,7 @@ namespace KindredCommands.Services
 			flyingPlayers.Remove(charEntity);
 			noAggroPlayers.Remove(charEntity);
 			noBlooddrainPlayers.Remove(charEntity);
+			noCCPlayers.Remove(charEntity);
 			noCooldownPlayers.Remove(charEntity);
 			if(noDurabilityPlayers.Remove(charEntity))
 				Core.TrackPlayerEquipment.StopTrackingPlayerForNoDurability(charEntity);
@@ -294,6 +305,22 @@ namespace KindredCommands.Services
 		public bool HasNoBlooddrain(Entity charEntity)
 		{
 			return noBlooddrainPlayers.Contains(charEntity);
+		}
+
+		public bool ToggleNoCC(Entity charEntity)
+		{
+			if (noCCPlayers.Contains(charEntity))
+			{
+				noCCPlayers.Remove(charEntity);
+				return false;
+			}
+			noCCPlayers.Add(charEntity);
+			return true;
+		}
+
+		public bool HasNoCC(Entity charEntity)
+		{
+			return noCCPlayers.Contains(charEntity);
 		}
 
 		public bool ToggleNoCooldown(Entity charEntity)
@@ -616,6 +643,8 @@ namespace KindredCommands.Services
 			Buffs.RemoveBuff(charEntity, Prefabs.BoostedBuff2);
 			Buffs.RemoveBuff(charEntity, Prefabs.Buff_General_Immaterial);
 
+			RestoreResistanceSettings(charEntity);
+
 			var equipment = charEntity.Read<Equipment>();
 			if (!equipment.IsEquipped(Prefabs.Item_Cloak_Main_ShroudOfTheForest, out var _) && BuffUtility.HasBuff(Core.EntityManager, charEntity, Prefabs.EquipBuff_ShroudOfTheForest))
 			{
@@ -631,6 +660,24 @@ namespace KindredCommands.Services
 				var caps = prefab.Read<VampireAttributeCaps>();
 				charEntity.Write(caps);
 			}
+		}
+
+		static void SetResistanceSettings(Entity charEntity, PrefabGUID settingsPrefab)
+		{
+			if (!charEntity.Has<BuffResistances>()) return;
+
+			var buffResistances = charEntity.Read<BuffResistances>();
+			buffResistances.SettingsEntity._Value = Core.PrefabCollectionSystem._PrefabGuidToEntityMap[settingsPrefab];
+			charEntity.Write(buffResistances);
+		}
+
+		static void RestoreResistanceSettings(Entity charEntity)
+		{
+			if (!charEntity.Has<BuffResistances>()) return;
+
+			var buffResistances = charEntity.Read<BuffResistances>();
+			buffResistances.SettingsEntity._Value = Core.PrefabCollectionSystem._PrefabGuidToEntityMap[buffResistances.InitialSettingGuid];
+			charEntity.Write(buffResistances);
 		}
 
 		void LoadCurrentPlayerBoosts()
@@ -743,6 +790,16 @@ namespace KindredCommands.Services
 				if (!equipment.IsEquipped(Prefabs.Item_Cloak_Main_ShroudOfTheForest, out var _))
 				{
 					TogglePlayerShrouded(charEntity);
+				}
+			}
+
+			if (charEntity.Has<BuffResistances>())
+			{
+				var buffResistances = charEntity.Read<BuffResistances>();
+				if (Core.PrefabCollectionSystem._PrefabGuidToEntityMap.TryGetValue(Prefabs.BuffResistance_UberMobNoKnockbackOrGrab, out var uberMobEntity) &&
+					buffResistances.SettingsEntity._Value == uberMobEntity)
+				{
+					noCCPlayers.Add(charEntity);
 				}
 			}
 		}
