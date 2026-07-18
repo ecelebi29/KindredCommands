@@ -567,7 +567,7 @@ namespace KindredCommands.Services
 
 			if (invinciblePlayers.Contains(charEntity))
 			{
-				buffModificationFlags |= (long)(BuffModificationTypes.Invulnerable | BuffModificationTypes.ImmuneToSun | BuffModificationTypes.CannotBeDisconnectDragged);
+				buffModificationFlags |= (long)(BuffModificationTypes.Invulnerable | BuffModificationTypes.ImmuneToSun | BuffModificationTypes.ImmuneToHazards | BuffModificationTypes.CannotBeDisconnectDragged);
 				foreach (var buff in invincibleBuffs)
 				{
 					modifyStatBuffer.Add(buff);
