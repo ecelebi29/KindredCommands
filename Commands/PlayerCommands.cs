@@ -3,7 +3,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using KindredCommands.Commands.Converters;
 using ProjectM;
+using ProjectM.Gameplay;
 using ProjectM.Network;
+using ProjectM.Shared;
 using Stunlock.Core;
 using Unity.Collections;
 using Unity.Entities;
@@ -416,6 +418,44 @@ public static class PlayerCommands
 			Core.BoostedPlayerService.SetSpeedBoost(charEntity, moveSpeed);
 			Core.BoostedPlayerService.UpdateBoostedPlayer(charEntity);
 			ctx.Reply($"You have slowed your pace and are now moving at the current speed of {closestNPC.EntityName()}.");
+		}
+	}
+
+	[Command("freeze", description: "Toggles freezing a player in place, preventing all movement and actions", adminOnly: true)]
+	public static void FreezeCommand(ChatCommandContext ctx, FoundPlayer player)
+	{
+		var userEntity = player.Value.UserEntity;
+		var charEntity = player.Value.CharEntity;
+		var freezeBuff = Data.Prefabs.Buff_General_LockRotation;
+
+		if (BuffUtility.HasBuff(Core.EntityManager, charEntity, freezeBuff))
+		{
+			if (Core.BoostedPlayerService.HasNoCC(charEntity))
+			{
+				Core.BoostedPlayerService.ToggleNoCC(charEntity);
+				Core.BoostedPlayerService.UpdateBoostedPlayer(charEntity);
+			}
+
+			Buffs.RemoveBuff(charEntity, freezeBuff);
+			ctx.Reply($"Unfroze {player.Value.CharacterName}");
+			return;
+		}
+
+		Buffs.AddBuff(userEntity, charEntity, freezeBuff, -1);
+		if (BuffUtility.TryGetBuff(Core.EntityManager, charEntity, freezeBuff, out var buffEntity))
+		{
+			var flagData = buffEntity.Read<BuffModificationFlagData>();
+			flagData.ModificationTypes |= (long)(BuffModificationTypes.MovementImpair | BuffModificationTypes.DisableDynamicCollision |
+				BuffModificationTypes.AbilityCastImpair | BuffModificationTypes.BuildMenuImpair);
+			buffEntity.Write(flagData);
+
+			if (!Core.BoostedPlayerService.HasNoCC(charEntity))
+			{
+				Core.BoostedPlayerService.ToggleNoCC(charEntity);
+				Core.BoostedPlayerService.UpdateBoostedPlayer(charEntity);
+			}
+
+			ctx.Reply($"Froze {player.Value.CharacterName}");
 		}
 	}
 

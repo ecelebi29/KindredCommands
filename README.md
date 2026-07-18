@@ -271,6 +271,9 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
 - `.teleport (x) (y) (z) (Player)`
   - will teleport a player to the coordinates specified.
   - Example: *.teleport 0 0 0 Bob*
+- `.freeze (Player)`
+  - will toggle freezing a player in place, preventing all movement and actions.
+  - Example: *.freeze Bob*
 - `.killplayer (Player)`
   - will kill a player.
   - Example: *.killplayer Bob*
