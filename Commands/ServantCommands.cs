@@ -85,7 +85,7 @@ internal class ServantCommands
 
 		var coffin = closest.Read<ServantCoffinstation>();
 		coffin.BloodQuality = 100;
-		coffin.ServantProficiency = 0.44f;
+		coffin.ServantProficiency = 0.5f;
 		closest.Write(coffin);
 
 		var servant = coffin.ConnectedServant.GetEntityOnServer();
@@ -93,7 +93,7 @@ internal class ServantCommands
 		{
 			var stats = servant.Read<ServantPower>();
 			stats.Power = 20;
-			stats.Expertise = 0.44f;
+			stats.Expertise = 0.5f;
 			servant.Write(stats);
 		}
 
