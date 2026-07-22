@@ -42,9 +42,12 @@ internal class BossCommands
         }
 		
 		var unitLevel = closestVBlood.Read<UnitLevel>();
-		var previousLevel = unitLevel.Level;
+		var previousLevel = unitLevel.Level._Value;
 		unitLevel.Level._Value = level;
         closestVBlood.Write<UnitLevel>(unitLevel);
+
+		if (!closestVBlood.Has<UnitLevelChanged>())
+			closestVBlood.Add<UnitLevelChanged>();
 
 		ctx.Reply($"Changed the nearest {boss.Name} to level {level} from level {previousLevel}");
 	}
@@ -77,9 +80,12 @@ internal class BossCommands
 		}
 
 		var unitLevel = closestVBlood.Read<UnitLevel>();
-		var previousLevel = unitLevel.Level;
+		var previousLevel = unitLevel.Level._Value;
 		unitLevel.Level._Value = level;
 		closestVBlood.Write<UnitLevel>(unitLevel);
+
+		if (!closestVBlood.Has<UnitLevelChanged>())
+			closestVBlood.Add<UnitLevelChanged>();
 
 		ctx.Reply($"Changed the nearest {boss.Name} to level {level} from level {previousLevel}");
 	}
