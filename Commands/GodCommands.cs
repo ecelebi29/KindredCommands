@@ -42,13 +42,16 @@ internal class GodCommands
 	[Command("mortal", adminOnly: true)]
 	public static void MortalCommand(ChatCommandContext ctx, OnlinePlayer player = null)
 	{
-		var charEntity = (player?.Value.CharEntity ?? ctx.Event.SenderCharacterEntity);
+		var charEntity = player?.Value.CharEntity ?? ctx.Event.SenderCharacterEntity;
+		var name = player?.Value.UserEntity.Read<User>().CharacterName ?? ctx.Event.User.CharacterName;
 
-		if (!Core.BoostedPlayerService.IsBoostedPlayer(charEntity) && !BuffUtility.HasBuff(Core.EntityManager, charEntity, Prefabs.BoostedBuff1)) return;
+		if (!Core.BoostedPlayerService.IsBoostedPlayer(charEntity) && !BuffUtility.HasBuff(Core.EntityManager, charEntity, Prefabs.BoostedBuff1))
+		{
+			ctx.Reply($"<color=white>{name}</color> has no god mode or boosts to remove");
+			return;
+		}
 
 		Core.BoostedPlayerService.RemoveBoostedPlayer(charEntity);
-
-		var name = player?.Value.UserEntity.Read<User>().CharacterName ?? ctx.Event.User.CharacterName;
 		ctx.Reply($"God mode and boosts removed from <color=white>{name}</color>");
 	}
 
