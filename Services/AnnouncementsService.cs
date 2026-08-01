@@ -124,6 +124,11 @@ class AnnouncementsService
 		return announcements;
 	}
 
+	public void ReloadAnnouncements()
+	{
+		LoadAnnoucements();
+	}
+
 	void LoadAnnoucements()
 	{
 		if (File.Exists(ANNOUNCEMENTS_PATH))

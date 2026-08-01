@@ -91,6 +91,13 @@ public class AnnounceCommands
 			ctx.Reply(sb.ToString());
 		}
 
+		[Command("reload", description: "Reload announcements from the config file.", adminOnly: true)]
+		public static void ReloadAnnouncementsCommand(ChatCommandContext ctx)
+		{
+			Core.AnnouncementsService.ReloadAnnouncements();
+			ctx.Reply("Announcements reloaded from file.");
+		}
+
 		[Command("remove", "r", description: "Remove an announcement.", adminOnly: true)]
 		public static void RemoveAnnouncementCommand(ChatCommandContext ctx, string name)
 		{

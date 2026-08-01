@@ -135,6 +135,8 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - Changes an announcement in the list of announcements. Time is server time. OneTime true will only do it once, false will repeat the announcement every day at the same time. (Default False)
   - Example: *.announce change Spooky “It is the spookiest hour!” 12:00AM false*
   - Shortcut: *.announce c*
+- `.announce reload`
+  - reloads the announcements config file
 
 ### Spawning Commands
 - `.bloodpotion (Bloodtype) (Quality) (Amount)`
