@@ -153,6 +153,7 @@ internal class CastleCommands
 				if ((castleHeart.FuelEndTime - Core.ServerTime) > 0 || castleHeart.FuelQuantity > 0) continue;
 				
 				var region = castleTerritoryEntity.Read<TerritoryWorldRegion>().Region;
+				if (region == WorldRegionType.None) continue;
 				if(plotsInDecay.ContainsKey(region))
 				{
 					plotsInDecay[region]++;
@@ -166,6 +167,7 @@ internal class CastleCommands
 			else
 			{
 				var region = castleTerritoryEntity.Read<TerritoryWorldRegion>().Region;
+				if (region == WorldRegionType.None) continue;
 				if(openPlots.ContainsKey(region))
 				{
 					openPlots[region]++;
@@ -217,6 +219,8 @@ internal class CastleCommands
 
 	public static string RegionName(WorldRegionType region)
 	{
+		if (region == WorldRegionType.Strongblade)
+			return "Oakveil Woodlands";
 		return Regex.Replace(region.ToString().Replace("_", ""), "(?<!^)([A-Z])", " $1");
 	}
 
