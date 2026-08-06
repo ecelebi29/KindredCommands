@@ -16,9 +16,7 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
 - `.reloadadmin`
   - will reload the admin list
 - `.autoadminauth`
-  - will toggle auto admin auth for the server. If enabled, players who are in the admin list will automatically be authenticated upon joining.
-- `.stealthadmin`
-  - will toggle stealth mode for the user as admin. This will enable you to still use all chat admin commands, but your name not go green. You cannot adminauth or you will show as green again. Will persist through relog. You will get kicked, don't freak.
+  - will add or remove yourself from the auto AdminAuth list. If on the list, you will automatically be admin authenticated upon joining.
 - `.reloadstaff`
   - reloads the staff list config file
 - `.setstaff (Player) (Rank)`
@@ -46,7 +44,7 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - will assign a steamID to a character.
   - Example: *.assignsteamID Bob 1234567890*
   - Shortcut: *.asid*
-- `.longestofflinecastles`
+- `.longestofflinecastles (page)`
   - will list all of the players who have been offline the longest and still have castles.
   - Shortcut: *.loc*
 - `.settime (day) (hour)`
@@ -82,9 +80,9 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - will set the durability of all soulshards in the player's inventory to the amount specified.
   - Example: *.gear soulsharddurability 2500 Bob*
   - Shortcut: *.gear ssd*
-- `.gear soulshardurabilitytime (seconds)`
+- `.gear soulsharddurabilitytime (seconds)`
   - How many seconds will soulshards last before they break. Do not enter anything for seconds if you want default behavior.
-  - Example: *.gear soulshardurabilitytime 60*
+  - Example: *.gear soulsharddurabilitytime 60*
   - Shortcut: *.gear ssdt*
 - `.gear destroyallshards`
   - Will destroy all soul shards. Equipped, in inventories, on the ground, and in pedestals. All of them. Useful for completely resetting shards.
@@ -172,7 +170,7 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - Example: *.customspawnat CHAR_ChurchOfLight_Lightweaver 0 0 0 scholar 100 true -1 100*
   - Shortcut: *.cspwnat*
 - `.despawnnpc (guid) (range)`
-  - will kill any entity matching the ID specified. Use sparingly as this is an expensive call, and could cause minor lag depending. Just for the cases where you can't kill something by hand.
+  - will kill any entity matching the ID specified within the range (default 25). Use sparingly as this is an expensive call, and could cause minor lag depending. Just for the cases where you can't kill something by hand.
   - Example: *.despawnnpc CHAR_ChurchOfLight_Lightweaver 10*
   - Shortcut: *.dspwn*
 - `.spawnban (Prefab GUID name) (reason)`
@@ -206,8 +204,8 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
 - `.mortal (player)`
   - will toggle godmode off a player named, or the user if no one is named. Also removes boosts.
   - Example: *.mortal Bob*
-- `.spectate (Player)`
-  - will set the player into spectate mode, where they are invisible and cannot interact with anything. Use again to remove it and teleport them to their prior position.
+- `.spectate (Player) (ReturnToStart: true/false)`
+  - will set the player into spectate mode, where they are invisible and cannot interact with anything. Use again to remove it and teleport them to their prior position (default true), or pass false to stay where they are.
   - Example: *.spectate Bob*
 - `.boost (Type) (Player)`
   - will boost a player with certain types: noaggro, noblooddrain, nocooldown, nodurability, immaterial, invincible, shrouded, fly, suninvulnerable, batvision. Remove via use of same command again as a toggle or use .mortal to strip all.
@@ -217,8 +215,8 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - will boost a player's stats to the amount specified. Types with amounts are the following: attackspeed, damage, health, speed, and yield.
   - Example: *.boost damage 100 Bob*
   - Shortcut: *.boost (as, d, h, s, y)*
-- `.boost remove (Type) (Player)`
-  - will remove a boost from a player. Used for removing boosts that require an amount set.
+- `.boost remove(Type) (Player)`
+  - will remove a boost from a player. Used for removing boosts that require an amount set: removeattackspeed, removedamage, removehealth, removespeed, removeyield.
   - Example: *.boost removedamage Bob*
   - Shortcut: *.boost (ras, rd, rh, rs, ry)*
 - `.boost state (Player)`
@@ -226,22 +224,20 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - Example: *.boost state Bob*
 - `.boost players`
   - provides a list of all boosted players
-- `.rename (Old Name) (New Name)`
-  - Renames a player. Original name will still show on map to clanmates.
-  - Example: *.rename Bob Joe*
+- `.rename (Player) (New Name)`
+  - Renames a player named, or the user if no one is named. Original name will still show on map to clanmates.
+  - Example: *.rename Bob Joe* or *.rename Joe*
 - `.revive (Player)`
   - will pick you up from being downed. If fully dead, sends player to coffin.
   - Example: *.revive Joe*
-- `.revivetarget (Player)`
+- `.revivetarget`
   - will revive the player you are hovering over.
-- `.pace`
-  - will match your movement speed to that of the closest NPC, allowing you to walk alongside them naturally. Use again to toggle back to normal speed.
 - `.gear [repair/break] (Player)`
   - will repair or break gear on a player (or self if no player specified)
   - Example: *.gear repair Joe* or *.gear break Joe*
   - Shortcut: *.gear r* or *.gear b*
 - `.gear [repair/break]all (range)`
-  - will repair or break all gear on players within the specified range.
+  - will repair or break all gear on players within the specified range (default 10).
   - Example: *.gear repairall 10* or *.gear breakall 10*
   - Shortcut: *.gear ra* or *.gear ba*
 - `.unlock (Player)`
@@ -258,15 +254,15 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - will move a player down a level in the air.
   - Example: *.flydown Bob*
   - Shortcut: *.fv*
-- `.flylevel (Player) (Level)`
-  - will set a player's level to the flight level specified. Think of levels like floor heights.
-  - Example: *.flylevel Bob 5*
-- `.flyheight (Player) (Height)`
-  - will set a player's fly height to the height specified.
-  - Example: *.flyheight Bob 10*
-- `.flyobstacleheight (Player) (Height)`
-  - will set a player's fly obstacle height to the height specified. This is the amount of temporary height you gain when you collide into an obstacle.
-  - Example: *.flyobstacleheight Bob 10*
+- `.flylevel (Level) (Player)`
+  - will set the flight level specified on a player named, or the user if no one is named. Think of levels like floor heights.
+  - Example: *.flylevel 5 Bob*
+- `.flyheight (Height)`
+  - will set your fly height to the height specified.
+  - Example: *.flyheight 10*
+- `.flyobstacleheight (Height)`
+  - will set your fly obstacle height to the height specified. This is the amount of temporary height you gain when you collide into an obstacle.
+  - Example: *.flyobstacleheight 10*
 - `.teleport (x) (y) (z) (Player)`
   - will teleport a player to the coordinates specified.
   - Example: *.teleport 0 0 0 Bob*
@@ -287,7 +283,7 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - will freeze the timer of the heart, preventing decay. This will only work if you're on top of a heart, making it very apparent which heart you'll be changing.
 - `.thawheart`
   - will unfreeze the timer of the heart, allowing decay. This will only work if you're on top of a heart, making it very apparent which heart you'll be changing.
-- `.frozenhearts`
+- `.frozenhearts (page)`
   - will list all frozen hearts on the server.
 - `.relocatereset`
   - will reset the relocation timer for the castle heart you are next to. This will only work if you're on top of a heart, making it very apparent which heart you'll be changing.
@@ -301,7 +297,7 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - Shortcut: *.c k*
 - `.clan changerole (Player) (Role)`
   - Changes the role of a player in their clan. Roles: member, officer, leader
-  - Example: *.clan changerole Joe 1*
+  - Example: *.clan changerole Joe officer*
   - Shortcut: *.c cr*
 - `.clan castles (Clan Name)`
   - will list all castles owned by a clan.
@@ -320,7 +316,7 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - will list how many plots are owned per player, in descending order.
   - Example: *.plotsowned*
   - Shortcut: *.po 2*
-- `.clanplotsowned`
+- `.clanplotsowned (page)`
   - will list how many plots are owned per clan, in descending order.
   - Example: *.clanplotsowned*
   - Shortcut: *.cpo*
@@ -450,7 +446,7 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - Example: *.boss modifyprimal octavian 100*
   - Shortcut: *.boss mp*
 - `.boss teleportto (name) (WhichOne)`
-  - will teleport you to the boss specified. Must be near boss. If multiple bosses are up, you can specify which one to teleport to. Bosses must have been spawned in at least once on the map to be teleported to.
+  - will teleport you to the boss specified. If multiple bosses are up, you can specify which one to teleport to. Bosses must have been spawned in at least once on the map to be teleported to.
   - Example: *.boss teleportto TheNameOfTheBoss 1*
   - Shortcut: *.boss tt*
 - `.boss list`
@@ -477,6 +473,8 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
 - `.ping`
   - tells you your latency
   - Shortcut: *.p*
+- `.pace`
+  - will match your movement speed to that of the closest NPC, allowing you to walk alongside them naturally. Use again to toggle back to normal speed.
 - `.clan list (page #)`
   - Shows a list of populated clans (and their message). Newest clans are at the start of the list.
   - Example: *.clan list 1*
