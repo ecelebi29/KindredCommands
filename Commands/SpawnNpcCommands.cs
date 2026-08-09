@@ -5,6 +5,7 @@ using ProjectM;
 using ProjectM.Behaviours;
 using ProjectM.Gameplay.Scripting;
 using ProjectM.Scripting;
+using ProjectM.Shared;
 using Stunlock.Core;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -166,11 +167,10 @@ internal static class SpawnCommands
 	{
 		var charEntity = ctx.Event.SenderCharacterEntity;
 		var pos = charEntity.Read<Translation>().Value.xz;
-		var entities = Helper.GetAllEntitiesInRadius<PrefabGUID>(pos, radius).Where(e => e.Read<PrefabGUID>().Equals(character.Prefab));
 		var count = 0;
-		foreach (var e in entities)
+		foreach (var e in Helper.GetEntitiesByPrefabInRadius(character.Prefab, pos, radius, includeDisabled: true))
 		{
-			StatChangeUtility.KillOrDestroyEntity(Core.EntityManager, e, charEntity, charEntity, Time.time, StatChangeReason.Default, true);
+			DestroyUtility.Destroy(Core.EntityManager, e);
 			count++;
 		}
 		ctx.Reply($"You've killed {count} {character.Name.Bold()} at your position. You murderer!");

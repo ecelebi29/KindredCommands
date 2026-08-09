@@ -106,6 +106,39 @@ internal static partial class Helper
 		return entities;
 	}
 
+	public static IEnumerable<Entity> GetEntitiesByPrefabInRadius(PrefabGUID prefab, float2 center, float radius, bool includeAll = false, bool includeDisabled = false, bool includeSpawn = false, bool includePrefab = false, bool includeDestroyed = false)
+	{
+		EntityQueryOptions options = EntityQueryOptions.Default;
+		if (includeAll) options |= EntityQueryOptions.IncludeAll;
+		if (includeDisabled) options |= EntityQueryOptions.IncludeDisabled;
+		if (includeSpawn) options |= EntityQueryOptions.IncludeSpawnTag;
+		if (includePrefab) options |= EntityQueryOptions.IncludePrefab;
+		if (includeDestroyed) options |= EntityQueryOptions.IncludeDestroyTag;
+
+		var entityQueryBuilder = new EntityQueryBuilder(Allocator.Temp)
+			.AddAll(new(Il2CppType.Of<PrefabGUID>(), ComponentType.AccessMode.ReadOnly))
+			.AddAll(new(Il2CppType.Of<Translation>(), ComponentType.AccessMode.ReadOnly))
+			.WithOptions(options);
+
+		var query = Core.EntityManager.CreateEntityQuery(ref entityQueryBuilder);
+
+		var entities = query.ToEntityArray(Allocator.Temp);
+		var prefabs = query.ToComponentDataArray<PrefabGUID>(Allocator.Temp);
+		var translations = query.ToComponentDataArray<Translation>(Allocator.Temp);
+
+		var radiusSq = radius * radius;
+		for (var i = 0; i < entities.Length; i++)
+		{
+			if (prefabs[i].GuidHash != prefab.GuidHash) continue;
+			if (math.distancesq(center, translations[i].Value.xz) > radiusSq) continue;
+			yield return entities[i];
+		}
+
+		entities.Dispose();
+		prefabs.Dispose();
+		translations.Dispose();
+	}
+
 	public static IEnumerable<Entity> GetAllEntitiesInRadius<T>(float2 center, float radius)
 	{
 		var spatialData = Core.GenerateCastle._TileModelLookupSystemData;

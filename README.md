@@ -172,7 +172,7 @@ Feel free to reach out to me on Discord (odjit) if you have any questions or nee
   - Example: *.customspawnat CHAR_ChurchOfLight_Lightweaver 0 0 0 scholar 100 true -1 100*
   - Shortcut: *.cspwnat*
 - `.despawnnpc (guid) (range)`
-  - will kill any entity matching the ID specified within the range (default 25). Use sparingly as this is an expensive call, and could cause minor lag depending. Just for the cases where you can't kill something by hand.
+  - will kill any entity matching the ID specified within the range (default 25). Just for the cases where you can't kill something by hand.
   - Example: *.despawnnpc CHAR_ChurchOfLight_Lightweaver 10*
   - Shortcut: *.dspwn*
 - `.spawnban (Prefab GUID name) (reason)`
