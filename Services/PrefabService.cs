@@ -20,7 +20,7 @@ internal class PrefabService
 		Core.Log.LogDebug($"All prefabs: {allPrefabs.Count}");
 		foreach (var kvp in allPrefabs)
 		{
-			var name = kvp.Key.LookupName();
+			var name = collectionSystem._PrefabLookupMap.GetName(kvp.Key);
 			bool success = AllNameToGuid.TryAdd(name.ToLowerInvariant(), (name, kvp.Key));
 			if (!success)
 			{
