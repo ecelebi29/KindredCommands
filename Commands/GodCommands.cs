@@ -111,6 +111,7 @@ internal class GodCommands
 				var noBlooddrain = Core.BoostedPlayerService.HasNoBlooddrain(charEntity);
 				var noCooldown = Core.BoostedPlayerService.HasNoCooldown(charEntity);
 				var noDurability = Core.BoostedPlayerService.HasNoDurability(charEntity);
+				var noHeightCorrection = Core.BoostedPlayerService.HasNoHeightCorrection(charEntity);
 				var noMapCollision = Core.BoostedPlayerService.HasNoMapCollision(charEntity);
 				var immaterial = Core.BoostedPlayerService.IsPlayerImmaterial(charEntity);
 				var invincible = Core.BoostedPlayerService.IsPlayerInvincible(charEntity);
@@ -139,6 +140,8 @@ internal class GodCommands
 					flags.Add("<color=white>No Cooldown</color>");
 				if(noDurability)
 					flags.Add("<color=white>No Durability Loss</color>");
+				if (noHeightCorrection)
+					flags.Add("<color=white>No Height Correction</color>");
 				if (noMapCollision)
 					flags.Add("<color=white>No Map Collision</color>");
 				if(immaterial)
@@ -389,6 +392,23 @@ internal class GodCommands
 			else
 			{
 				ctx.Reply($"No durability loss removed from <color=white>{name}</color>");
+			}
+			Core.BoostedPlayerService.UpdateBoostedPlayer(charEntity);
+		}
+
+		[Command("noheightcorrection", "nhc", adminOnly: true)]
+		public static void NoHeightCorrection(ChatCommandContext ctx, OnlinePlayer player = null)
+		{
+			var name = player?.Value.UserEntity.Read<User>().CharacterName ?? ctx.Event.User.CharacterName;
+			var charEntity = player?.Value.CharEntity ?? ctx.Event.SenderCharacterEntity;
+
+			if (Core.BoostedPlayerService.ToggleNoHeightCorrection(charEntity))
+			{
+				ctx.Reply($"No height correction added to <color=white>{name}</color>");
+			}
+			else
+			{
+				ctx.Reply($"No height correction removed from <color=white>{name}</color>");
 			}
 			Core.BoostedPlayerService.UpdateBoostedPlayer(charEntity);
 		}

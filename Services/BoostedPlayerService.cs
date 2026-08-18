@@ -23,6 +23,7 @@ namespace KindredCommands.Services
 		readonly HashSet<Entity> noBlooddrainPlayers = [];
 		readonly HashSet<Entity> noDurabilityPlayers = [];
 		readonly HashSet<Entity> noCooldownPlayers = [];
+		readonly HashSet<Entity> noHeightCorrectionPlayers = [];
 		readonly HashSet<Entity> noMapCollisionPlayers = [];
 		readonly HashSet<Entity> immaterialPlayers = [];
 		readonly HashSet<Entity> invinciblePlayers = [];
@@ -41,7 +42,7 @@ namespace KindredCommands.Services
 				playerSpeeds.ContainsKey(charEntity) || playerYield.ContainsKey(charEntity) ||
 				batVisionPlayers.Contains(charEntity) || flyingPlayers.Contains(charEntity) || 
 				noAggroPlayers.Contains(charEntity) || noBlooddrainPlayers.Contains(charEntity) || noDurabilityPlayers.Contains(charEntity) ||
-				noCooldownPlayers.Contains(charEntity) || noMapCollisionPlayers.Contains(charEntity) ||
+				noCooldownPlayers.Contains(charEntity) || noHeightCorrectionPlayers.Contains(charEntity) || noMapCollisionPlayers.Contains(charEntity) ||
 				immaterialPlayers.Contains(charEntity) || invinciblePlayers.Contains(charEntity) ||
 				includeShrouded && shroudedPlayers.Contains(charEntity) || sunInvulnPlayers.Contains(charEntity) ||
 				includeDaywalkers && daywalkerPlayers.Contains(charEntity);
@@ -148,6 +149,7 @@ namespace KindredCommands.Services
 			noCooldownPlayers.Remove(charEntity);
 			if(noDurabilityPlayers.Remove(charEntity))
 				Core.TrackPlayerEquipment.StopTrackingPlayerForNoDurability(charEntity);
+			noHeightCorrectionPlayers.Remove(charEntity);
 			noMapCollisionPlayers.Remove(charEntity);
 			immaterialPlayers.Remove(charEntity);
 			invinciblePlayers.Remove(charEntity);
@@ -329,6 +331,22 @@ namespace KindredCommands.Services
 		public bool HasNoDurability(Entity charEntity)
 		{
 			return noDurabilityPlayers.Contains(charEntity);
+		}
+
+		public bool ToggleNoHeightCorrection(Entity charEntity)
+		{
+			if (noHeightCorrectionPlayers.Contains(charEntity))
+			{
+				noHeightCorrectionPlayers.Remove(charEntity);
+				return false;
+			}
+			noHeightCorrectionPlayers.Add(charEntity);
+			return true;
+		}
+
+		public bool HasNoHeightCorrection(Entity charEntity)
+		{
+			return noHeightCorrectionPlayers.Contains(charEntity);
 		}
 
 		public bool ToggleNoMapCollision(Entity charEntity)
@@ -572,6 +590,11 @@ namespace KindredCommands.Services
 				buffModificationFlags |= (long)(BuffModificationTypes.DisableDynamicCollision | BuffModificationTypes.FlyOnlyMapCollision | BuffModificationTypes.IsFlying);
 			}
 
+			if (noHeightCorrectionPlayers.Contains(charEntity))
+			{
+				buffModificationFlags |= (long)(BuffModificationTypes.DisableHeightCorrection);
+			}
+
 			if (noMapCollisionPlayers.Contains(charEntity))
 			{
 				buffModificationFlags |= (long)(BuffModificationTypes.DisableMapCollision);
@@ -714,6 +737,10 @@ namespace KindredCommands.Services
 					if ((buffModificationFlagData.ModificationTypes & (long)BuffModificationTypes.IsFlying) != 0)
 					{
 						flyingPlayers.Add(charEntity);
+					}
+					if ((buffModificationFlagData.ModificationTypes & (long)BuffModificationTypes.DisableHeightCorrection) != 0)
+					{
+						noHeightCorrectionPlayers.Add(charEntity);
 					}
 					if ((buffModificationFlagData.ModificationTypes & (long)BuffModificationTypes.DisableMapCollision) != 0)
 					{
